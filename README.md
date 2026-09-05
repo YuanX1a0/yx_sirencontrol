@@ -1,6 +1,6 @@
 # yx_sirencontrol 3.8.1
 
-FiveM 警灯与警笛控制器，采用中文 RageUI 菜单、JavaScript 客户端和 C# OneSync 服务端。本仓库为采用专有许可的私人发布仓库，许可见 [LICENSE](LICENSE)。
+FiveM 警灯与警笛控制器，采用中文 RageUI 菜单、JavaScript 客户端和 C# OneSync 服务端。本仓库为公开发布仓库，项目仍采用专有许可，许可见 [LICENSE](LICENSE)。
 
 C# 服务端仅提供运行需要的 `server/yuanx1a0_siren_control.net.dll`，不上传 `.cs`／`.csproj` 源码、C# 测试工程、编译脚本或调试符号。完整 C# 开发工程仅在作者本地保存。FiveM 运行需要的 JS／Lua 脚本、配置与原创模型正常保留。
 
