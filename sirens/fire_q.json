@@ -1,0 +1,64 @@
+{
+  "Id": "fire_q",
+  "Label": "消防 / Q 机械警笛与 Powercall",
+  "AudioBanks": [
+    "DLC_SERVERSIDEAUDIO\\OISS_SSA_VEHAUD_LSFD_NEW",
+    "DLC_SERVERSIDEAUDIO\\OISS_SSA_VEHAUD_BCFD_NEW"
+  ],
+  "ManualHorn": {
+    "Label": "消防气喇叭",
+    "SoundName": "OISS_SSA_VEHAUD_LSFD_NEW_HORN",
+    "SoundSet": "OISS_SSA_VEHAUD_LSFD_NEW_SOUNDSET",
+    "AudioBank": "DLC_SERVERSIDEAUDIO\\OISS_SSA_VEHAUD_LSFD_NEW"
+  },
+  "DefaultSlots": [
+    "powercall",
+    "q_coast",
+    "q_high",
+    "q_mid",
+    "q_mid2"
+  ],
+  "Tones": [
+    {
+      "Id": "powercall",
+      "Label": "Powercall（风铃）",
+      "Type": "continuous",
+      "SoundName": "OISS_SSA_VEHAUD_LSFD_NEW_SIREN_ADAM",
+      "SoundSet": "OISS_SSA_VEHAUD_LSFD_NEW_SOUNDSET",
+      "AudioBank": "DLC_SERVERSIDEAUDIO\\OISS_SSA_VEHAUD_LSFD_NEW"
+    },
+    {
+      "Id": "q_coast",
+      "Label": "Q Coast（滑行）",
+      "Type": "continuous",
+      "SoundName": "OISS_SSA_VEHAUD_LSFD_NEW_SIREN_BOY",
+      "SoundSet": "OISS_SSA_VEHAUD_LSFD_NEW_SOUNDSET",
+      "AudioBank": "DLC_SERVERSIDEAUDIO\\OISS_SSA_VEHAUD_LSFD_NEW"
+    },
+    {
+      "Id": "q_high",
+      "Label": "Q High（高转）",
+      "Type": "continuous",
+      "SoundName": "OISS_SSA_VEHAUD_LSFD_NEW_SIREN_CHARLES",
+      "SoundSet": "OISS_SSA_VEHAUD_LSFD_NEW_SOUNDSET",
+      "AudioBank": "DLC_SERVERSIDEAUDIO\\OISS_SSA_VEHAUD_LSFD_NEW"
+    },
+    {
+      "Id": "q_mid",
+      "Label": "Q Mid（中转）",
+      "Type": "continuous",
+      "SoundName": "OISS_SSA_VEHAUD_BCFD_NEW_SIREN_DAVID",
+      "SoundSet": "OISS_SSA_VEHAUD_BCFD_NEW_SOUNDSET",
+      "AudioBank": "DLC_SERVERSIDEAUDIO\\OISS_SSA_VEHAUD_BCFD_NEW"
+    },
+    {
+      "Id": "q_mid2",
+      "Label": "Q Mid 2（中转）",
+      "Type": "continuous",
+      "SoundName": "OISS_SSA_VEHAUD_BCFD_NEW_SIREN_EDWARD",
+      "SoundSet": "OISS_SSA_VEHAUD_BCFD_NEW_SOUNDSET",
+      "AudioBank": "DLC_SERVERSIDEAUDIO\\OISS_SSA_VEHAUD_BCFD_NEW"
+    }
+  ],
+  "RequiredResource": "yx_siren_audio_lvc"
+}

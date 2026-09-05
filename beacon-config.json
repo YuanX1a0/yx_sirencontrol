@@ -1,0 +1,27 @@
+{
+  "Command": "putsiren",
+  "Framework": "auto",
+  "AllowedJobs": ["police", "ambulance", "sheriff"],
+  "Model": "yx_movia_d_red",
+  "LedModel": "yx_movia_d_red_glow",
+  "Color": [255, 12, 12],
+  "FlashPeriodMs": 800,
+  "FlashWindowsMs": [[0, 90], [160, 250], [320, 410], [480, 570]],
+  "LightHeight": 0.088,
+  "LightRange": 12,
+  "LightIntensity": 3.0,
+  "RenderDistance": 120,
+  "LoadTimeoutMs": 6000,
+  "MountOffsets": {},
+  "HandOffset": [0.06, 0, -0.075],
+  "HandRotation": [0, 0, 0],
+  "EmergencyModels": [],
+  "ScanEmergencyMetadata": true,
+  "Animation": {
+    "Dict": "missarmenian1driving_taunts@lamar_1",
+    "Clip": "hahahakeepup",
+    "DurationMs": 2000
+  },
+  "PrepareTimeoutMs": 10000,
+  "RequestCooldownMs": 800
+}

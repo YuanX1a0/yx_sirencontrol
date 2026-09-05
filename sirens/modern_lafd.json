@@ -1,0 +1,76 @@
+{
+  "Id": "modern_lafd",
+  "Label": "现代警笛 3.1.5.A / LAFD 消防 Spectra",
+  "AudioBanks": [],
+  "ManualHorn": {
+    "Label": "SoundOff 气喇叭",
+    "SoundName": "SIRENS_AIRHORN",
+    "SoundSet": null
+  },
+  "DefaultSlots": [
+    "wail",
+    "yelp",
+    "fire_horn",
+    "ems_wail",
+    "ems_yelp"
+  ],
+  "Tones": [
+    {
+      "Id": "wail",
+      "Label": "LAFD Motorola Spectra Wail（长鸣）",
+      "Type": "continuous",
+      "SoundName": "RESIDENT_VEHICLES_SIREN_FIRETRUCK_WAIL_01",
+      "SoundSet": null
+    },
+    {
+      "Id": "yelp",
+      "Label": "Motorola Spectra Quick（急促）",
+      "Type": "continuous",
+      "SoundName": "RESIDENT_VEHICLES_SIREN_FIRETRUCK_QUICK_01",
+      "SoundSet": null
+    },
+    {
+      "Id": "fire_horn",
+      "Label": "消防车气喇叭",
+      "Type": "continuous",
+      "SoundName": "VEHICLES_HORNS_FIRETRUCK_WARNING",
+      "SoundSet": null
+    },
+    {
+      "Id": "ems_wail",
+      "Label": "Whelen 295SLASA6 Wail（长鸣）",
+      "Type": "continuous",
+      "SoundName": "RESIDENT_VEHICLES_SIREN_WAIL_01",
+      "SoundSet": null
+    },
+    {
+      "Id": "ems_yelp",
+      "Label": "Whelen 295SLASA6 Yelp（急促）",
+      "Type": "continuous",
+      "SoundName": "RESIDENT_VEHICLES_SIREN_QUICK_01",
+      "SoundSet": null
+    },
+    {
+      "Id": "powercall",
+      "Label": "SSP3000B Powercall（风铃）",
+      "Type": "continuous",
+      "SoundName": "VEHICLES_HORNS_AMBULANCE_WARNING",
+      "SoundSet": null
+    },
+    {
+      "Id": "police_wail",
+      "Label": "SSP3000B Wail（长鸣）",
+      "Type": "continuous",
+      "SoundName": "VEHICLES_HORNS_SIREN_1",
+      "SoundSet": null
+    },
+    {
+      "Id": "police_yelp",
+      "Label": "SSP3000B Yelp（急促）",
+      "Type": "continuous",
+      "SoundName": "VEHICLES_HORNS_SIREN_2",
+      "SoundSet": null
+    }
+  ],
+  "RequiredResource": "yx_siren_audio_modern"
+}

@@ -1,0 +1,63 @@
+{
+  "Id": "ss2000",
+  "Label": "Federal Signal SS2000SM / Rumbler 低频",
+  "AudioBanks": [
+    "DLC_SERVERSIDEAUDIO\\OISS_SSA_VEHAUD_LSSD_NEW"
+  ],
+  "ManualHorn": {
+    "Label": "SS2000 气喇叭",
+    "SoundName": "OISS_SSA_VEHAUD_LSSD_NEW_HORN",
+    "SoundSet": "OISS_SSA_VEHAUD_LSSD_NEW_SOUNDSET",
+    "AudioBank": "DLC_SERVERSIDEAUDIO\\OISS_SSA_VEHAUD_LSSD_NEW"
+  },
+  "DefaultSlots": [
+    "wail",
+    "yelp",
+    "priority",
+    "rumbler_wail",
+    "rumbler_yelp"
+  ],
+  "Tones": [
+    {
+      "Id": "wail",
+      "Label": "SS2000 Wail（长鸣）",
+      "Type": "continuous",
+      "SoundName": "OISS_SSA_VEHAUD_LSSD_NEW_SIREN_ADAM",
+      "SoundSet": "OISS_SSA_VEHAUD_LSSD_NEW_SOUNDSET",
+      "AudioBank": "DLC_SERVERSIDEAUDIO\\OISS_SSA_VEHAUD_LSSD_NEW"
+    },
+    {
+      "Id": "yelp",
+      "Label": "SS2000 Yelp（急促）",
+      "Type": "continuous",
+      "SoundName": "OISS_SSA_VEHAUD_LSSD_NEW_SIREN_BOY",
+      "SoundSet": "OISS_SSA_VEHAUD_LSSD_NEW_SOUNDSET",
+      "AudioBank": "DLC_SERVERSIDEAUDIO\\OISS_SSA_VEHAUD_LSSD_NEW"
+    },
+    {
+      "Id": "priority",
+      "Label": "SS2000 Priority（优先）",
+      "Type": "continuous",
+      "SoundName": "OISS_SSA_VEHAUD_LSSD_NEW_SIREN_CHARLES",
+      "SoundSet": "OISS_SSA_VEHAUD_LSSD_NEW_SOUNDSET",
+      "AudioBank": "DLC_SERVERSIDEAUDIO\\OISS_SSA_VEHAUD_LSSD_NEW"
+    },
+    {
+      "Id": "rumbler_wail",
+      "Label": "Rumbler Wail（低频长鸣）",
+      "Type": "continuous",
+      "SoundName": "OISS_SSA_VEHAUD_LSSD_NEW_SIREN_DAVID",
+      "SoundSet": "OISS_SSA_VEHAUD_LSSD_NEW_SOUNDSET",
+      "AudioBank": "DLC_SERVERSIDEAUDIO\\OISS_SSA_VEHAUD_LSSD_NEW"
+    },
+    {
+      "Id": "rumbler_yelp",
+      "Label": "Rumbler Yelp（低频急促）",
+      "Type": "continuous",
+      "SoundName": "OISS_SSA_VEHAUD_LSSD_NEW_SIREN_EDWARD",
+      "SoundSet": "OISS_SSA_VEHAUD_LSSD_NEW_SOUNDSET",
+      "AudioBank": "DLC_SERVERSIDEAUDIO\\OISS_SSA_VEHAUD_LSSD_NEW"
+    }
+  ],
+  "RequiredResource": "yx_siren_audio_lvc"
+}

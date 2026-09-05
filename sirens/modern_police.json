@@ -1,0 +1,90 @@
+{
+  "Id": "modern_police",
+  "Label": "现代警笛 3.1.5.A / 警用组合",
+  "AudioBanks": [],
+  "ManualHorn": {
+    "Label": "SoundOff 气喇叭",
+    "SoundName": "SIRENS_AIRHORN",
+    "SoundSet": null
+  },
+  "DefaultSlots": [
+    "wail",
+    "yelp",
+    "priority",
+    "rls_wail",
+    "rls_yelp"
+  ],
+  "Tones": [
+    {
+      "Id": "wail",
+      "Label": "SSP3000B Wail（长鸣）",
+      "Type": "continuous",
+      "SoundName": "VEHICLES_HORNS_SIREN_1",
+      "SoundSet": null
+    },
+    {
+      "Id": "yelp",
+      "Label": "SSP3000B Yelp（急促）",
+      "Type": "continuous",
+      "SoundName": "VEHICLES_HORNS_SIREN_2",
+      "SoundSet": null
+    },
+    {
+      "Id": "priority",
+      "Label": "SSP3000B Priority（优先）",
+      "Type": "continuous",
+      "SoundName": "VEHICLES_HORNS_POLICE_WARNING",
+      "SoundSet": null
+    },
+    {
+      "Id": "rls_wail",
+      "Label": "Code 3 RLS Wail（长鸣）",
+      "Type": "continuous",
+      "SoundName": "RESIDENT_VEHICLES_SIREN_WAIL_02",
+      "SoundSet": null
+    },
+    {
+      "Id": "rls_yelp",
+      "Label": "Code 3 RLS Yelp（急促）",
+      "Type": "continuous",
+      "SoundName": "RESIDENT_VEHICLES_SIREN_QUICK_02",
+      "SoundSet": null
+    },
+    {
+      "Id": "bike_wail",
+      "Label": "Whelen WS320 Wail（长鸣）",
+      "Type": "continuous",
+      "SoundName": "RESIDENT_VEHICLES_SIREN_WAIL_03",
+      "SoundSet": null
+    },
+    {
+      "Id": "bike_yelp",
+      "Label": "Whelen WS320 Yelp（急促）",
+      "Type": "continuous",
+      "SoundName": "RESIDENT_VEHICLES_SIREN_QUICK_03",
+      "SoundSet": null
+    },
+    {
+      "Id": "ems_wail",
+      "Label": "Whelen 295SLASA6 Wail（长鸣）",
+      "Type": "continuous",
+      "SoundName": "RESIDENT_VEHICLES_SIREN_WAIL_01",
+      "SoundSet": null
+    },
+    {
+      "Id": "ems_yelp",
+      "Label": "Whelen 295SLASA6 Yelp（急促）",
+      "Type": "continuous",
+      "SoundName": "RESIDENT_VEHICLES_SIREN_QUICK_01",
+      "SoundSet": null
+    },
+    {
+      "Id": "powercall",
+      "Label": "SSP3000B Powercall（风铃）",
+      "Type": "continuous",
+      "SoundName": "VEHICLES_HORNS_AMBULANCE_WARNING",
+      "SoundSet": null
+    }
+  ],
+  "RequiredResource": "yx_siren_audio_modern"
+}
