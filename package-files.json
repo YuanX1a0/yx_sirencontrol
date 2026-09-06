@@ -1,0 +1,30 @@
+{
+  "version": "3.9.0",
+  "resource": "yx_sirencontrol",
+  "files": [
+    "LICENSE",
+    "README.md",
+    "THIRD-PARTY-NOTICES.md",
+    "audio/README.md",
+    "audio/install.ps1",
+    "client/beacon.js",
+    "client/config.js",
+    "client/main.js",
+    "client/menu.lua",
+    "client/settings.js",
+    "config/beacon.json",
+    "config/sirens/builtin.json",
+    "config/sirens/fire_q.json",
+    "config/sirens/modern_lafd.json",
+    "config/sirens/modern_police.json",
+    "config/sirens/ss2000.json",
+    "docs/audio-installation.md",
+    "docs/custom-sirens.md",
+    "fxmanifest.lua",
+    "server/beacon.lua",
+    "server/yuanx1a0_siren_control.net.dll",
+    "stream/yx_movia_d_red.ydr",
+    "stream/yx_movia_d_red_glow.ydr",
+    "stream/yx_movia_d_red_glow.ytyp"
+  ]
+}

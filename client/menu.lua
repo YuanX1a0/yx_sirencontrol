@@ -1,6 +1,6 @@
 -- SPDX-License-Identifier: LicenseRef-Proprietary
 -- Copyright (C) 2026 YuanX1a0
--- RageUI renders this menu. State and per-vehicle persistence belong to client.js.
+-- RageUI renders this menu. State and per-vehicle persistence belong to client/main.js.
 
 local EXPECTED_RESOURCE_NAME = 'yx_sirencontrol'
 local currentResourceName = tostring(GetCurrentResourceName() or '')

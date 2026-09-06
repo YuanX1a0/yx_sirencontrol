@@ -30,8 +30,8 @@ for _, path in ipairs({
 }) do
     assert(scriptIndexes[path], 'fxmanifest.lua is missing ' .. path)
 end
-assert(scriptIndexes['menu.lua'] > scriptIndexes['@RageUI/menu/items/UIList.lua'],
-    'menu.lua must load after the RageUI library scripts')
+assert(scriptIndexes['client/menu.lua'] > scriptIndexes['@RageUI/menu/items/UIList.lua'],
+    'client/menu.lua must load after the RageUI library scripts')
 
 local handlers, events, threads, waits = {}, {}, {}, {}
 local disabledThisFrame, enabledThisFrame = {}, {}
@@ -213,7 +213,7 @@ function RageUI.List(label, items, index, description, style, enabled, actions, 
     }
 end
 
-local menuPath = arg[1] or 'menu.lua'
+local menuPath = arg[1] or 'client/menu.lua'
 for _, badName in ipairs({ 'YX_SIRENCONTROL', 'yx_sirencontrol-main', 'yx_sirencontorl', 'wrongname', '' }) do
     local printed, originalPrint = {}, print
     print = function(message) printed[#printed + 1] = tostring(message) end

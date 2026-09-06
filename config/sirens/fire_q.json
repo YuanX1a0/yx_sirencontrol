@@ -60,5 +60,5 @@
       "AudioBank": "DLC_SERVERSIDEAUDIO\\OISS_SSA_VEHAUD_BCFD_NEW"
     }
   ],
-  "RequiredResource": "yx_siren_audio_lvc"
+  "RequiredFile": "audio/lvc/installed-files.json"
 }

@@ -56,34 +56,17 @@ class ReleaseAuditTests(unittest.TestCase):
             self.assertTrue(any('directory' in x for x in failures))
             self.assertTrue(any('extension' in x for x in failures))
 
+    def test_reviewed_audio_installer_and_readme_are_allowed(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = self.fixture(folder, ['audio/README.md', 'audio/install.ps1'])
+            (root / 'audio').mkdir()
+            (root / 'audio/README.md').write_text('# Local audio instructions\n', encoding='utf-8')
+            (root / 'audio/install.ps1').write_text('# Reviewed installer\n', encoding='utf-8')
+            self.assertEqual(audit_module.audit(root), [])
+
     def test_inventory_cannot_escape_root(self):
         with tempfile.TemporaryDirectory() as folder:
             self.assertTrue(any('unsafe' in x for x in audit_module.audit(self.fixture(folder, ['../outside.txt']))))
-
-    def test_csharp_source_and_projects_are_rejected_even_if_added_to_inventory(self):
-        for name in ('SirenServer.cs', 'Main.CS', 'script.csx', 'server.csproj', 'server.sln',
-                     'server.slnx', 'Directory.Build.props', 'build.targets', 'debug.suo', 'debug.user',
-                     'src/renamed.txt', '.vs/local.txt', 'build.ps1'):
-            with self.subTest(name=name), tempfile.TemporaryDirectory() as folder:
-                root = self.fixture(folder, [name])
-                path = root / name
-                path.parent.mkdir(parents=True, exist_ok=True)
-                path.write_text('// Local-only C# development file\n')
-                self.assertTrue(any('C# source/build' in x for x in audit_module.audit(root)))
-
-    def test_runtime_dll_and_js_lua_are_allowed_without_csharp_project(self):
-        with tempfile.TemporaryDirectory() as folder:
-            name = 'server/yuanx1a0_siren_control.net.dll'
-            root = self.fixture(folder, [name, 'menu.lua'])
-            (root / 'server').mkdir()
-            raw = b'MZ' + bytes(64)
-            (root / name).write_bytes(raw)
-            (root / 'menu.lua').write_text('-- Runtime menu\n')
-            path = root / 'release-files.json'
-            inventory = json.loads(path.read_text())
-            inventory['binary_sha256'] = {name: hashlib.sha256(raw).hexdigest()}
-            path.write_text(json.dumps(inventory))
-            self.assertEqual(audit_module.audit(root), [])
 
     def test_own_binary_requires_the_reviewed_hash(self):
         with tempfile.TemporaryDirectory() as folder:

@@ -5,6 +5,7 @@
 (function (root) {
     'use strict';
     var identifier = /^[a-z0-9][a-z0-9_-]{0,63}$/;
+    var resourceFile = /^(?:[A-Za-z0-9][A-Za-z0-9_.-]*\/)*[A-Za-z0-9][A-Za-z0-9_.-]*$/;
     function soundValid(sound) {
         return sound && typeof sound.SoundName === 'string' && sound.SoundName.length > 0 &&
             (sound.SoundSet == null || typeof sound.SoundSet === 'string') &&
@@ -18,6 +19,11 @@
         if (pack.AudioBanks != null && (!Array.isArray(pack.AudioBanks) ||
             pack.AudioBanks.some(function (bank) { return typeof bank !== 'string' || !bank; }))) {
             throw new Error(pack.Id + ': invalid AudioBanks');
+        }
+        if (pack.RequiredFile != null && (typeof pack.RequiredFile !== 'string' ||
+            pack.RequiredFile.length > 255 || !resourceFile.test(pack.RequiredFile) ||
+            pack.RequiredFile.split('/').some(function (part) { return part === '.' || part === '..'; }))) {
+            throw new Error(pack.Id + ': invalid RequiredFile');
         }
         var ids = new Set();
         pack.Tones.forEach(function (tone) {

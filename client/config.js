@@ -50,7 +50,7 @@ globalThis.YXSirenControlConfig = {
         Intensity: 4.0
     },
 
-    // Audio definitions live in sirens/*.json, registered by siren_pack in fxmanifest.lua.
+    // Audio definitions live in config/sirens/*.json, registered by siren_pack in fxmanifest.lua.
     Audio: {
         RenderDistance: 180.0,
         MaxAudibleVehicles: 12,

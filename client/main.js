@@ -51,6 +51,15 @@
             var path = GetResourceMetadata(resourceName, 'siren_pack', index);
             try {
                 var pack = settings.validatePack(JSON.parse(LoadResourceFile(resourceName, path).replace(/^\uFEFF/, '')));
+                var requiredFile = pack.RequiredFile;
+                if (requiredFile != null) {
+                    var marker = LoadResourceFile(resourceName, requiredFile);
+                    if (typeof marker !== 'string' || marker.length === 0) {
+                        console.log('yx_sirencontrol: skipped pack ' + pack.Id + '; install its audio inside ' +
+                            requiredFile.replace(/\/[^/]+$/, '') + ' and restart yx_sirencontrol.');
+                        continue;
+                    }
+                }
                 var required = pack.RequiredResource;
                 if (required != null) {
                     if (typeof required !== 'string' || required.trim() !== required ||

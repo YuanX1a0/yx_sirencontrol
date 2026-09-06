@@ -10,7 +10,7 @@ const root = path.resolve(__dirname, '..');
 const prefix = 'yx_sirencontrol:beacon:';
 
 function boot(options = {}) {
-    const config = { ...JSON.parse(fs.readFileSync(path.join(root, 'beacon-config.json'))), ...options.config };
+    const config = { ...JSON.parse(fs.readFileSync(path.join(root, 'config/beacon.json'))), ...options.config };
     const calls = [], server = [], notices = [], errors = [], events = new Map(), commands = new Map();
     const testConsole = Object.create(console);
     testConsole.error = (...args) => errors.push(args.join(' '));
@@ -102,7 +102,7 @@ function boot(options = {}) {
         RegisterCommand: (name, callback) => commands.set(name, callback), on, onNet: on,
         TriggerServerEvent: (...args) => server.push(args), TriggerEvent: record('TriggerEvent')
     });
-    vm.runInContext(fs.readFileSync(path.join(root, 'beacon.js'), 'utf8'), context);
+    vm.runInContext(fs.readFileSync(path.join(root, 'client/beacon.js'), 'utf8'), context);
     const controller = context.YXRoofBeacon.create({ resourceName: options.contextResourceName ?? 'yx_sirencontrol', command: 'siren',
         state: id => states.get(id), synced: () => true, isEmergency: () => emergency,
         mountOffset: options.mountOffset, changed: options.changed, notify: message => notices.push(message) });
@@ -169,7 +169,7 @@ test('renamed beacon factories stay inert even when the caller claims the requir
 
 test('valid beacon factories use the native resource identity for config and lifecycle events', () => {
     const app = boot({ contextResourceName: 'another_resource' });
-    assert.deepEqual(app.callsOf('LoadResourceFile'), [['LoadResourceFile', 'yx_sirencontrol', 'beacon-config.json']]);
+    assert.deepEqual(app.callsOf('LoadResourceFile'), [['LoadResourceFile', 'yx_sirencontrol', 'config/beacon.json']]);
     assert.equal(app.errors.length, 0);
     app.command(); assert.equal(app.messages('request').length, 1);
     app.event('onClientResourceStart', 'another_resource');

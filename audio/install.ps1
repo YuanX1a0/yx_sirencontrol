@@ -3,13 +3,13 @@
 
 <#
 .SYNOPSIS
-Creates an optional FiveM audio resource from files you downloaded yourself.
+Installs optional siren audio inside this yx_sirencontrol resource.
 .DESCRIPTION
 This script downloads nothing and contains no third-party recordings or audio
 definitions. Original AWC and DAT files are copied byte-for-byte, never converted.
-The destination parent must already exist and must be outside this repository.
-An existing resource is never overwritten. Start the generated resource before
-yx_sirencontrol; without it the controller continues to offer GTA native sounds.
+An existing install is never overwritten. The script updates the managed audio
+block in this resource's fxmanifest.lua after copied files pass SHA-256 checks.
+Restart yx_sirencontrol after installation; no additional audio resource is used.
 
 Modern: download and extract Realistic American Sirens Pack / Modern Siren Pack
 3.1.5.A from https://www.gta5-mods.com/misc/realistic-american-sirens-pack .
@@ -28,29 +28,25 @@ data/serversideaudio_sounds.dat54.rel and dlc_serversideaudio/*.awc (or
 sfx/dlc_serversideaudio/*.awc). A resource root with that layout under audio/ is
 also supported. The original DLC_SERVERSIDEAUDIO names are preserved. Every bank
 referenced by the original DAT must exist, including banks unused by our menu.
-Start the generated wrapper only, not the original audio resource alongside it:
-both would register the same DLC_SERVERSIDEAUDIO namespace.
+Do not start the original audio resource alongside yx_sirencontrol: both would
+register the same DLC_SERVERSIDEAUDIO namespace.
 
 Keep the downloaded authors' notices and follow their terms. Their recordings
 remain separate from the controller's license. This script copies only audio;
 it never copies or runs scripts, DLLs, README files, or executables from the pack.
 .PARAMETER Pack
-Modern creates yx_siren_audio_modern. Lvc creates yx_siren_audio_lvc.
+Modern installs under audio/modern. Lvc installs under audio/lvc.
 .PARAMETER SourceDirectory
 Absolute path to one of the supported extracted layouts above. No archive input.
-.PARAMETER OutputDirectory
-Absolute path to an existing parent folder outside this repository and outside
-SourceDirectory. Only the new, fixed-name child resource is created there.
 .EXAMPLE
-./tools/install-audio.ps1 -Pack Modern -SourceDirectory 'D:/Downloads/Modern Pack' -OutputDirectory 'D:/AudioResources'
+./audio/install.ps1 -Pack Modern -SourceDirectory 'D:/Downloads/Modern Pack'
 .EXAMPLE
-./tools/install-audio.ps1 -Pack Lvc -SourceDirectory 'D:/Downloads/Server-Sided-Sounds-and-Sirens/audio' -OutputDirectory 'D:/AudioResources' -WhatIf
+./audio/install.ps1 -Pack Lvc -SourceDirectory 'D:/Downloads/Server-Sided-Sounds-and-Sirens' -WhatIf
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
     [Parameter(Mandatory = $true)][ValidateSet('Modern', 'Lvc')][string]$Pack,
-    [Parameter(Mandatory = $true)][string]$SourceDirectory,
-    [Parameter(Mandatory = $true)][string]$OutputDirectory
+    [Parameter(Mandatory = $true)][string]$SourceDirectory
 )
 
 Set-StrictMode -Version Latest
@@ -102,6 +98,20 @@ function Assert-Awc([string]$Path) {
     } finally { $stream.Dispose() }
 }
 
+function Get-Sha256([string]$Path) {
+    # Get-FileHash inherits a script-level -WhatIf in Windows PowerShell 5.1.
+    # Use the framework implementation so a dry run still validates real files.
+    Assert-NoReparsePoint $Path
+    $stream = [IO.File]::Open($Path, [IO.FileMode]::Open, [IO.FileAccess]::Read, [IO.FileShare]::Read)
+    $sha = [Security.Cryptography.SHA256]::Create()
+    try {
+        return [BitConverter]::ToString($sha.ComputeHash($stream)).Replace('-', '')
+    } finally {
+        $sha.Dispose()
+        $stream.Dispose()
+    }
+}
+
 function Get-RelBankNames([string]$Path) {
     # Only read the DAT54 container-name table. No sound definitions are rewritten.
     Assert-NoReparsePoint $Path
@@ -137,15 +147,31 @@ function Get-RelBankNames([string]$Path) {
 }
 
 $source = Get-AbsoluteDirectory $SourceDirectory 'SourceDirectory'
-$outputParent = Get-AbsoluteDirectory $OutputDirectory 'OutputDirectory'
-$repository = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
-$resourceName = if ($Pack -eq 'Modern') { 'yx_siren_audio_modern' } else { 'yx_siren_audio_lvc' }
-$target = [IO.Path]::GetFullPath((Join-Path $outputParent $resourceName))
-if ((Test-WithinDirectory $outputParent $repository) -or (Test-WithinDirectory $target $repository)) {
-    throw 'OutputDirectory must be outside the controller repository.'
+$resource = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+Assert-NoReparsePoint $resource
+if ([IO.Path]::GetFileName($resource.TrimEnd([char[]]'\/')) -cne 'yx_sirencontrol') {
+    throw 'The resource directory must be named exactly yx_sirencontrol before installing audio.'
 }
-if (Test-WithinDirectory $outputParent $source) { throw 'OutputDirectory must be outside SourceDirectory.' }
-if (Test-Path -LiteralPath $target) { throw "Target already exists; nothing was overwritten: $target" }
+$manifest = Join-Path $resource 'fxmanifest.lua'
+if (-not (Test-Path -LiteralPath $manifest -PathType Leaf)) { throw 'Cannot find this resource''s fxmanifest.lua.' }
+if ((Test-WithinDirectory $source $resource) -or (Test-WithinDirectory $resource $source)) {
+    throw 'SourceDirectory and yx_sirencontrol must be separate directories.'
+}
+$packDirectory = $Pack.ToLowerInvariant()
+$target = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot $packDirectory))
+if (-not (Test-WithinDirectory $target $PSScriptRoot)) { throw 'Resolved audio destination escaped the audio directory.' }
+if (Test-Path -LiteralPath $target) { throw "Audio pack already exists; nothing was overwritten: $target" }
+
+# Validate the exact managed block before copying anything. This keeps a damaged or
+# hand-edited manifest from leaving behind a target directory that blocks a retry.
+$begin = "-- BEGIN YX_AUDIO_$($Pack.ToUpperInvariant())"
+$end = "-- END YX_AUDIO_$($Pack.ToUpperInvariant())"
+$manifestLines = [IO.File]::ReadAllLines($manifest)
+$beginIndexes = @(for ($index = 0; $index -lt $manifestLines.Length; $index++) { if ($manifestLines[$index] -ceq $begin) { $index } })
+$endIndexes = @(for ($index = 0; $index -lt $manifestLines.Length; $index++) { if ($manifestLines[$index] -ceq $end) { $index } })
+if ($beginIndexes.Count -ne 1 -or $endIndexes.Count -ne 1 -or $beginIndexes[0] -ge $endIndexes[0]) {
+    throw "fxmanifest.lua has no unique managed block for $Pack audio."
+}
 
 $copyPlan = New-Object 'System.Collections.Generic.List[object]'
 if ($Pack -eq 'Modern') {
@@ -196,35 +222,36 @@ if ($Pack -eq 'Modern') {
 
 foreach ($entry in $copyPlan) {
     if ([IO.Path]::GetExtension($entry.Source) -ieq '.awc') { Assert-Awc $entry.Source }
-    $entry | Add-Member -NotePropertyName Hash -NotePropertyValue (Get-FileHash -LiteralPath $entry.Source -Algorithm SHA256).Hash
+    $entry | Add-Member -NotePropertyName Hash -NotePropertyValue (Get-Sha256 $entry.Source)
 }
 
-if (-not $PSCmdlet.ShouldProcess($target, "Create $resourceName from $($copyPlan.Count) verified local audio files")) { return }
+if (-not $PSCmdlet.ShouldProcess($target, "Install $Pack audio inside yx_sirencontrol from $($copyPlan.Count) verified files")) { return }
 
 # All validation happens before creation. Never use -Force or overwrite an old install.
-# The manifest is written last so an incomplete copy is not a runnable resource.
+# The install marker is written last so an incomplete copy never enables a menu pack.
 New-Item -ItemType Directory -Path $target -ErrorAction Stop | Out-Null
 foreach ($entry in $copyPlan) {
     $destination = Join-Path $target $entry.Relative
     [IO.Directory]::CreateDirectory([IO.Path]::GetDirectoryName($destination)) | Out-Null
     [IO.File]::Copy($entry.Source, $destination, $false)
-    if ((Get-FileHash -LiteralPath $destination -Algorithm SHA256).Hash -cne $entry.Hash) {
+    if ((Get-Sha256 $destination) -cne $entry.Hash) {
         throw "Audio copy changed during installation. Incomplete resource has no manifest; inspect: $target"
     }
 }
 
-$manifestLines = @(
-    '-- SPDX-License-Identifier: LicenseRef-Proprietary',
-    '-- Copyright (c) 2026 YuanX1a0. Wrapper only; audio retains upstream rights.',
-    "fx_version 'cerulean'", "game 'gta5'", "description 'Locally installed optional siren audio'",
-    'files {', "    '$wavepack/*.awc',"
-)
-if ($Pack -eq 'Lvc') { $manifestLines += "    'data/serversideaudio_sounds.dat54.rel'," }
-$manifestLines += @('}', "data_file 'AUDIO_WAVEPACK' '$wavepack'")
-if ($Pack -eq 'Lvc') { $manifestLines += "data_file 'AUDIO_SOUNDDATA' 'data/serversideaudio_sounds.dat'" }
 $utf8 = New-Object Text.UTF8Encoding($false)
 $records = @($copyPlan | ForEach-Object { [ordered]@{ File = $_.Relative; SHA256 = $_.Hash } })
-[IO.File]::WriteAllText((Join-Path $target 'installed-files.json'), (ConvertTo-Json -InputObject $records -Depth 3), $utf8)
-[IO.File]::WriteAllText((Join-Path $target 'fxmanifest.lua'), ($manifestLines -join "`n") + "`n", $utf8)
-Write-Host "Created $resourceName. Add 'ensure $resourceName' before 'ensure yx_sirencontrol' yourself."
-[pscustomobject]@{ ResourceName = $resourceName; Destination = $target; FileCount = $copyPlan.Count }
+$prefix = "audio/$packDirectory/"
+$managed = @($begin, 'files {', "    '$($prefix)installed-files.json',", "    '$prefix$wavepack/*.awc',")
+if ($Pack -eq 'Lvc') { $managed += "    '$($prefix)data/serversideaudio_sounds.dat54.rel'," }
+$managed += @('}', "data_file 'AUDIO_WAVEPACK' '$prefix$wavepack'")
+if ($Pack -eq 'Lvc') { $managed += "data_file 'AUDIO_SOUNDDATA' '$($prefix)data/serversideaudio_sounds.dat'" }
+$managed += $end
+$updated = @()
+if ($beginIndexes[0] -gt 0) { $updated += $manifestLines[0..($beginIndexes[0] - 1)] }
+$updated += $managed
+if ($endIndexes[0] + 1 -lt $manifestLines.Length) { $updated += $manifestLines[($endIndexes[0] + 1)..($manifestLines.Length - 1)] }
+[IO.File]::WriteAllText($manifest, ($updated -join "`n") + "`n", $utf8)
+[IO.File]::WriteAllText((Join-Path $target 'installed-files.json'), (ConvertTo-Json -InputObject $records -Depth 3) + "`n", $utf8)
+Write-Host "Installed $Pack audio inside yx_sirencontrol. Restart yx_sirencontrol; do not ensure a separate audio resource."
+[pscustomobject]@{ ResourceName = 'yx_sirencontrol'; Pack = $Pack; Destination = $target; FileCount = $copyPlan.Count }

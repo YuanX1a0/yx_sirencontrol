@@ -17,7 +17,7 @@
         }
         var prefix = 'yx_sirencontrol:beacon:';
         var config;
-        try { config = JSON.parse(LoadResourceFile(resourceName, 'beacon-config.json').replace(/^\uFEFF/, '')); }
+        try { config = JSON.parse(LoadResourceFile(resourceName, 'config/beacon.json').replace(/^\uFEFF/, '')); }
         catch (error) {
             console.error('[yx_sirencontrol] 无法加载车顶警灯配置：' + error.message);
             return inactive();

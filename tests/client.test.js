@@ -17,7 +17,9 @@ function boot(options = {}) {
     const testConsole = Object.create(console);
     for (const level of Object.keys(logs)) testConsole[level] = (...args) => logs[level].push(args);
     const resourceName = options.resourceName === undefined ? 'yx_sirencontrol' : options.resourceName;
-    const resourceStates = options.resourceStates ?? { yx_siren_audio_lvc: 'started', yx_siren_audio_modern: 'started' };
+    const resourceStates = options.resourceStates ?? {};
+    const installedFiles = new Set(options.installedFiles === undefined
+        ? ['audio/lvc/installed-files.json', 'audio/modern/installed-files.json'] : options.installedFiles);
     const cars = new Map([
         [10, { model: 100, plate: ' LAPD01 ', classId: 18, net: 110, coords: [0, 0, 0] }],
         [20, { model: 100, plate: 'LAPD02', classId: 18, net: 120, coords: [5, 0, 0] }],
@@ -38,7 +40,8 @@ function boot(options = {}) {
         GetResourceState: name => { record('GetResourceState')(name); return resourceStates[name] || 'missing'; },
         GetNumResourceMetadata: () => packPaths.length, GetResourceMetadata: (_resource, _key, i) => packPaths[i],
         LoadResourceFile: (_resource, file) => options.packOverrides?.[file] !== undefined
-            ? JSON.stringify(options.packOverrides[file]) : fs.readFileSync(path.join(root, file), 'utf8'),
+            ? JSON.stringify(options.packOverrides[file]) : installedFiles.has(file) ? '[{"installed":true}]'
+                : file.startsWith('audio/') ? null : fs.readFileSync(path.join(root, file), 'utf8'),
         PlayerPedId: () => 1, GetGameTimer: () => timer, GetNetworkTimeAccurate: () => options.networkTime ?? timer,
         GetCurrentServerEndpoint: () => options.endpoint || '127.0.0.1:30120',
         Entity: car => ({ state: options.vehicleStates?.[car] || {} }),
@@ -103,9 +106,9 @@ function boot(options = {}) {
         draws.push({ text: drawingText, x, y, color: [...textColor], centre: textCentre, right: textRight, scale: textScale, timer });
         drawingText = null; record('EndTextCommandDisplayText')(x, y);
     };
-    for (const file of ['config.js', 'settings.js', 'beacon.js', 'client.js']) {
+    for (const file of ['client/config.js', 'client/settings.js', 'client/beacon.js', 'client/main.js']) {
         vm.runInContext(fs.readFileSync(path.join(root, file), 'utf8'), context, { filename: file });
-        if (file === 'beacon.js') {
+        if (file === 'client/beacon.js') {
             const create = context.YXRoofBeacon.create;
             context.YXRoofBeacon.create = options => { beaconContext = options; return create(options); };
         }
@@ -174,9 +177,9 @@ test('all registered packs validate; every key binding references a real tone', 
     assert.throws(() => app.context.YXSirenSettings.validatePack(invalid));
 });
 
-test('without optional audio providers the menu and old vehicle profiles fall back to builtin sounds', () => {
+test('without optional in-resource audio the menu and old vehicle profiles fall back to builtin sounds', () => {
     const fixture = legacyProfileFixture();
-    const app = boot({ resourceStates: {}, externalKvp: fixture.externalKvp }); app.ready(); app.open();
+    const app = boot({ installedFiles: [], externalKvp: fixture.externalKvp }); app.ready(); app.open();
     assert.deepEqual(app.view().packs.map(pack => pack.id), ['builtin']);
     assert.equal(app.view().packId, 'builtin');
     assert.equal(app.view().slot, 4); assert.equal(app.view().parkKill, false);
@@ -188,23 +191,37 @@ test('without optional audio providers the menu and old vehicle profiles fall ba
     assert.equal(app.calls.some(call => call[0] === 'RequestScriptAudioBank'), false);
 });
 
-test('optional packs require their exact provider to be fully started before the controller', () => {
+test('optional packs require their exact in-resource installation marker', () => {
     const both = boot(); both.ready(); both.open();
     assert.deepEqual(both.view().packs.map(pack => pack.id).sort(), packData.map(pack => pack.Id).sort());
-    for (const state of ['missing', 'uninitialized', 'starting', 'stopped', 'stopping', 'unknown', 'STARTED']) {
-        const app = boot({ resourceStates: { yx_siren_audio_lvc: 'started', yx_siren_audio_modern: state } });
-        app.ready(); app.open();
-        assert.deepEqual(app.view().packs.map(pack => pack.id).sort(), ['builtin', 'fire_q', 'ss2000'], state);
-    }
-    const modern = boot({ resourceStates: { yx_siren_audio_modern: 'started' } }); modern.ready(); modern.open();
+    const lvc = boot({ installedFiles: ['audio/lvc/installed-files.json'] }); lvc.ready(); lvc.open();
+    assert.deepEqual(lvc.view().packs.map(pack => pack.id).sort(), ['builtin', 'fire_q', 'ss2000']);
+    const modern = boot({ installedFiles: ['audio/modern/installed-files.json'] }); modern.ready(); modern.open();
     assert.deepEqual(modern.view().packs.map(pack => pack.id).sort(), ['builtin', 'modern_lafd', 'modern_police']);
+});
+
+test('invalid in-resource marker paths cannot register packs or read outside the resource', () => {
+    const file = packPaths.find(file => file.endsWith('/ss2000.json'));
+    const original = packData.find(pack => pack.Id === 'ss2000');
+    for (const required of ['', '../audio/installed.json', '/absolute.json', 'audio\\file.json',
+        'audio//file.json', 'audio/../file.json', 'audio/file name.json', 123, true, [], {}]) {
+        const app = boot({ packOverrides: { [file]: { ...original, RequiredFile: required } } });
+        app.ready(); app.open();
+        assert.equal(app.view().packs.some(pack => pack.id === 'ss2000'), false, JSON.stringify(required));
+        assert.ok(app.logs.error.flat().some(line => /RequiredFile/.test(line)), JSON.stringify(required));
+    }
+    const marker = 'audio/custom/my-pack/installed.json';
+    const available = boot({ installedFiles: [marker], packOverrides: { [file]: { ...original, RequiredFile: marker } } });
+    available.ready(); available.open(); assert.equal(available.view().packs.some(pack => pack.id === 'ss2000'), true);
+    const missing = boot({ installedFiles: [], packOverrides: { [file]: { ...original, RequiredFile: marker } } });
+    missing.ready(); missing.open(); assert.equal(missing.view().packs.some(pack => pack.id === 'ss2000'), false);
 });
 
 test('invalid optional resource names cannot register packs or reach resource native calls', () => {
     const file = packPaths.find(file => file.endsWith('/ss2000.json'));
     const original = packData.find(pack => pack.Id === 'ss2000');
     for (const required of ['', 'provider/path', '../provider', 'provider name', 'provider\n', '_provider', 'a'.repeat(65), 123, true, [], {}]) {
-        const app = boot({ packOverrides: { [file]: { ...original, RequiredResource: required } } });
+        const app = boot({ packOverrides: { [file]: { ...original, RequiredFile: null, RequiredResource: required } } });
         app.ready(); app.open();
         assert.equal(app.view().packs.some(pack => pack.id === 'ss2000'), false, JSON.stringify(required));
         assert.ok(app.logs.error.flat().some(line => /RequiredResource/.test(line)), JSON.stringify(required));
@@ -212,12 +229,12 @@ test('invalid optional resource names cannot register packs or reach resource na
     }
     for (const required of ['Provider-1_name', 'a'.repeat(64)]) {
         const app = boot({ resourceStates: { [required]: 'started' },
-            packOverrides: { [file]: { ...original, RequiredResource: required } } });
+            packOverrides: { [file]: { ...original, RequiredFile: null, RequiredResource: required } } });
         app.ready(); app.open();
         assert.equal(app.view().packs.some(pack => pack.id === 'ss2000'), true);
     }
     const unconditionallyAvailable = boot({ resourceStates: {},
-        packOverrides: { [file]: { ...original, RequiredResource: null } } });
+        installedFiles: [], packOverrides: { [file]: { ...original, RequiredFile: null, RequiredResource: null } } });
     unconditionallyAvailable.ready(); unconditionallyAvailable.open();
     assert.deepEqual(unconditionallyAvailable.view().packs.map(pack => pack.id).sort(), ['builtin', 'ss2000']);
 });

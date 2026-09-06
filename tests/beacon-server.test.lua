@@ -23,7 +23,7 @@ local function setup(options)
     function GetHashKey(name) local value = 0; for i = 1, #name do value = value * 13 + name:byte(i); value = value % 1000003 end; return value end
     function LoadResourceFile(name, path)
         sim.fileReads = sim.fileReads + 1
-        if name == 'yx_sirencontrol' and path == 'beacon-config.json' then return 'config' end
+        if name == 'yx_sirencontrol' and path == 'config/beacon.json' then return 'config' end
         return sim.files[name .. ':' .. path]
     end
     json = { decode = function(text)
@@ -62,7 +62,7 @@ local function setup(options)
     }
     local originalPrint = print
     print = function(message) sim.logs[#sim.logs + 1] = tostring(message) end
-    local ok, failure = pcall(dofile, 'beacon-server.lua')
+    local ok, failure = pcall(dofile, 'server/beacon.lua')
     print = originalPrint
     check(ok, failure)
 end

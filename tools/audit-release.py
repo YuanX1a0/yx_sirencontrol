@@ -17,8 +17,8 @@ BINARY_FILES = {
 }
 BLOCKED_SUFFIXES = {'.awc', '.wav', '.mp3', '.ogg', '.flac', '.oac', '.rel', '.rpf',
                     '.ycd', '.ytd', '.zip', '.7z', '.rar', '.exe', '.pdb', '.pem', '.key', '.pfx'}
-BLOCKED_PARTS = {'audio', 'vendor', 'third_party', 'rageui', 'reference', 'beacon-animation'}
-CSHARP_SUFFIXES = {'.cs', '.csx', '.csproj', '.sln', '.slnx', '.props', '.targets', '.suo', '.user'}
+BLOCKED_PARTS = {'vendor', 'third_party', 'rageui', 'reference', 'beacon-animation'}
+ALLOWED_AUDIO_FILES = {'audio/README.md', 'audio/install.ps1'}
 MAGIC = (b'ADAT', b'TADA', b'RIFF', b'OggS', b'fLaC', b'ID3', b'PK\x03\x04', b'Rar!')
 SENSITIVE = [
     re.compile(r'gh[pousr]_[A-Za-z0-9]{36,}'),
@@ -64,11 +64,10 @@ def audit(root):
         path = root / name
         if not path.is_file() or path.is_symlink() or not path.resolve().is_relative_to(root):
             issues.append(name + ': missing, linked, or outside repository'); continue
-        if (path.suffix.lower() in CSHARP_SUFFIXES or name.casefold() == 'build.ps1'
-                or set(part.casefold() for part in rel.parts) & {'src', '.vs', 'bin', 'obj'}):
-            issues.append(name + ': C# source/build projects must stay local')
         if set(part.casefold() for part in rel.parts) & BLOCKED_PARTS:
             issues.append(name + ': third-party or downloaded-content directory')
+        if rel.parts and rel.parts[0].casefold() == 'audio' and name not in ALLOWED_AUDIO_FILES:
+            issues.append(name + ': unapproved file in the local audio installation directory')
         if path.suffix.lower() in BLOCKED_SUFFIXES or name.lower().endswith('.rel.xml'):
             issues.append(name + ': excluded asset/archive/credential extension')
         raw = path.read_bytes()

@@ -11,8 +11,12 @@ src/
 *.user
 .vs/
 /build.ps1
+
 # Downloaded audio, third-party data and local installation outputs never belong here.
-audio/
+# Keep only the reviewed in-resource installer and its short README.
+audio/*
+!audio/README.md
+!audio/install.ps1
 **/yx_siren_audio_*/
 *.awc
 *.wav

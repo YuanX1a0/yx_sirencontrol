@@ -6,32 +6,41 @@ game 'gta5'
 
 author 'YuanX1a0'
 description '带 RageUI 中文设置菜单的紧急车辆与便衣警灯警笛控制器'
-version '3.8.1'
+version '3.9.0'
 
 dependencies {
     '/onesync',
     'RageUI'
 }
 
--- Optional packs load only when their RequiredResource is already started.
--- Third-party audio is downloaded by the user and installed outside this repo.
-siren_pack 'sirens/builtin.json'
-siren_pack 'sirens/ss2000.json'
-siren_pack 'sirens/fire_q.json'
-siren_pack 'sirens/modern_police.json'
-siren_pack 'sirens/modern_lafd.json'
+-- Siren profiles live in this resource. Optional audio is installed under audio/.
+siren_pack 'config/sirens/builtin.json'
+siren_pack 'config/sirens/ss2000.json'
+siren_pack 'config/sirens/fire_q.json'
+siren_pack 'config/sirens/modern_police.json'
+siren_pack 'config/sirens/modern_lafd.json'
 
 files {
-    'beacon-config.json',
+    'config/beacon.json',
     'stream/yx_movia_d_red_glow.ytyp',
-    'sirens/builtin.json',
-    'sirens/ss2000.json',
-    'sirens/fire_q.json',
-    'sirens/modern_police.json',
-    'sirens/modern_lafd.json'
+    'config/sirens/builtin.json',
+    'config/sirens/ss2000.json',
+    'config/sirens/fire_q.json',
+    'config/sirens/modern_police.json',
+    'config/sirens/modern_lafd.json'
 }
 
 data_file 'DLC_ITYP_REQUEST' 'stream/yx_movia_d_red_glow.ytyp'
+
+-- BEGIN YX_AUDIO_MODERN
+-- audio/install.ps1 writes this managed block after Modern audio is installed.
+-- END YX_AUDIO_MODERN
+
+-- BEGIN YX_AUDIO_LVC
+-- audio/install.ps1 writes this managed block after LVC audio is installed.
+-- END YX_AUDIO_LVC
+
+-- Add custom AUDIO_* registrations below. See audio/README.md.
 
 client_scripts {
     '@RageUI/RMenu.lua',
@@ -60,12 +69,12 @@ client_scripts {
     '@RageUI/menu/panels/UIPercentagePanel.lua',
     '@RageUI/menu/panels/UIStatisticsPanel.lua',
     '@RageUI/menu/windows/UIHeritage.lua',
-    'menu.lua',
-    'config.js',
-    'settings.js',
-    'beacon.js',
-    'client.js'
+    'client/menu.lua',
+    'client/config.js',
+    'client/settings.js',
+    'client/beacon.js',
+    'client/main.js'
 }
 
 server_script 'server/yuanx1a0_siren_control.net.dll'
-server_script 'beacon-server.lua'
+server_script 'server/beacon.lua'

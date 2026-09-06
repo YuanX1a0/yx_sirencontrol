@@ -11,10 +11,10 @@ end
 
 local prefix = 'yx_sirencontrol:beacon:'
 local configOk, config = pcall(function()
-    return json.decode(LoadResourceFile(resource, 'beacon-config.json'))
+    return json.decode(LoadResourceFile(resource, 'config/beacon.json'))
 end)
 if not configOk or type(config) ~= 'table' then
-    print('^1[yx_sirencontrol] beacon-config.json 无效，便携警灯已停用。^7')
+    print('^1[yx_sirencontrol] config/beacon.json 无效，便携警灯已停用。^7')
     return
 end
 
@@ -91,7 +91,7 @@ local function scanResource(name)
         end
     end
     if unresolved and not scannedResources[name] then
-        print(('[yx_sirencontrol] %s 的 vehicles.meta 使用通配符；请在 beacon-config.json EmergencyModels 中补充无法读取的紧急车型，或为该资源添加具体 file 路径。'):format(name))
+        print(('[yx_sirencontrol] %s 的 vehicles.meta 使用通配符；请在 config/beacon.json EmergencyModels 中补充无法读取的紧急车型，或为该资源添加具体 file 路径。'):format(name))
     end
     scannedResources[name] = true
 end

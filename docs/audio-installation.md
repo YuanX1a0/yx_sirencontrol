@@ -1,69 +1,80 @@
-# 自行下载和安装警笛音频
+# 在控制器资源内安装 Modern／LVC 警笛
 
-本仓库不包含录音、AWC、DAT、REL、原作者压缩包或第三方音频定义。下面的安装工具只处理你已自行下载、获准使用的本地文件，不联网下载、不重新编码、不修改音频内容。
+发行版不包含任何第三方录音、AWC、REL 或原作者压缩包。`audio/install.ps1` 只会读取你自行下载并解压的文件，逐字节复制到当前 `yx_sirencontrol/audio/`，然后更新本资源的 `fxmanifest.lua`。它不会联网下载、修改音频或建立另一个资源。
 
-未安装可选音频时，控制器只显示“GTA 原生警笛”。音频资源需要在 `yx_sirencontrol` 之前启动；新增资源后重启控制器，客户端和服务端才会一起注册对应包。
+安装前确认资源目录准确命名为 `yx_sirencontrol`。在 PowerShell 中进入该目录，再执行下面对应的命令。可以先加 `-WhatIf` 只做输入检查和预演。
 
-## Modern Siren Pack：警车与消防组合
+## Modern Siren Pack（音色配置按 3.1.5.A 验证）
 
-作者：**GravelRoadCop／LEDesigns**。
+作者：GravelRoadCop／LEDesigns。
 
 - [GTA5-Mods 原发布页](https://www.gta5-mods.com/misc/realistic-american-sirens-pack)
 - [LCPDFR 原发布页](https://www.lcpdfr.com/downloads/gta5mods/audio/14373-modern-siren-pack/)
 
-本项目的音色配置针对 **Modern Siren Pack 3.1.5.A**。从作者页面下载并自行阅读所下载版本的许可，解压后找到成品 `vehicles.awc`。使用包含该文件的目录作为输入：
+两个发布页可能提供不同版本。本项目内置的音色名称按用户提供的 **3.1.5.A** 验证；从作者页面取得你获准使用的版本并解压后，找到成品 `vehicles.awc`，再把包含它的目录交给安装器：
 
 ```powershell
-.\tools\install-audio.ps1 -Pack Modern `
-  -SourceDirectory '<解压后的 vehicles 目录>' `
-  -OutputDirectory '<仓库外的 FiveM resources 目录>'
+.\audio\install.ps1 -Pack Modern `
+  -SourceDirectory 'D:\Downloads\MODERN SIREN PACK - 3.1.5.A'
 ```
 
-工具将创建独立的 `yx_siren_audio_modern` 资源，原样复制 `vehicles.awc`，并生成挂载所需的 manifest。在服务器配置中使用：
+安装器会生成以下运行文件，并把对应 `files` 和 `AUDIO_WAVEPACK` 注册写进主 manifest 的 `YX_AUDIO_MODERN` 受管区块：
+
+```text
+yx_sirencontrol/
+└─ audio/
+   └─ modern/
+      ├─ installed-files.json
+      └─ sfx/
+         └─ resident/
+            └─ vehicles.awc
+```
+
+菜单会出现 `modern_police` 与 `modern_lafd`。Modern 的 `resident/vehicles.awc` 会替换 GTA 原生车辆警笛槽位，因此同一服务器只能保留一份 resident 替换；其他脚本调用相同原生声音名时也会听到这份录音。
+
+## LVC：SS2000／Rumbler／消防 Q
+
+准备以下两份作者提供的内容：
+
+1. [Server-Sided-Sounds-and-Sirens](https://github.com/fk-1997/Server-Sided-Sounds-and-Sirens) 的完整音频，用于取得 `serversideaudio_sounds.dat54.rel` 和全部 `dlc_serversideaudio` 银行。
+2. [LVC Extras：Server Sided Mega Pack A (5+1)](https://github.com/TrevorBarns/luxart-vehicle-control-extras/tree/master/Siren%20Packs/Server%20Sided%20Mega%20Pack%20A%20%285%2B1%29) 的替换 AWC。
+
+先解压完整基础包，再把 Mega Pack 的 AWC 覆盖到这份**本地副本**的 `dlc_serversideaudio` 目录。Mega Pack 本身没有完整 DAT 和全部银行，不能单独安装。准备好以后运行：
+
+```powershell
+.\audio\install.ps1 -Pack Lvc `
+  -SourceDirectory 'D:\Downloads\Server-Sided-Sounds-and-Sirens'
+```
+
+安装器会验证 DAT54 引用的全部银行，然后生成：
+
+```text
+yx_sirencontrol/
+└─ audio/
+   └─ lvc/
+      ├─ installed-files.json
+      ├─ data/
+      │  └─ serversideaudio_sounds.dat54.rel
+      └─ sfx/
+         └─ dlc_serversideaudio/
+            └─ *.awc
+```
+
+主 manifest 的 `YX_AUDIO_LVC` 受管区块会同时注册 `AUDIO_WAVEPACK` 和 `AUDIO_SOUNDDATA`。菜单会出现 `ss2000` 与 `fire_q`。不要同时启动原始 Server-Sided-Sounds-and-Sirens 资源，否则会重复注册 `DLC_SERVERSIDEAUDIO` 命名空间。
+
+## 启动与更新
+
+服务器配置不再需要 `yx_siren_audio_modern` 或 `yx_siren_audio_lvc`：
 
 ```cfg
 ensure RageUI
-ensure yx_siren_audio_modern
 ensure yx_sirencontrol
 ```
 
-对应菜单为 `modern_police` 和 `modern_lafd`，包括警车、消防、EMS 等原生声音槽位。车型／部门名称用于说明风格，不表示 LAPD／LAFD 官方认证。
+安装后执行 `restart yx_sirencontrol`，并让玩家重新连接。若客户端仍使用旧音频，让玩家完全退出 FiveM 后再进入以清除本次连接的音频缓存。
 
-Modern 覆盖全局 `resident/vehicles.awc`，因此“GTA 原生”及其他脚本调用相同原生声音名称时，也会听到替换录音。同一服务器只保留一个有效的 resident 替换包；不要同时启动其他挂载该路径的音频资源。更换 AWC 后重新启动服务端并让玩家退出 FiveM 后重连，避免旧声音仍在缓存中。
+安装器拒绝覆盖已有的 `audio/modern` 或 `audio/lvc`。更新包时先停止资源，备份后删除对应安装目录，再用新输入重新运行安装器。安装器会核对 AWC 签名和复制前后的 SHA-256，并最后才写入 `installed-files.json`；标记不存在时，控制器不会把相应音色放进菜单。
 
-## SS2000／Rumbler 与消防 Q
+安装器不会复制第三方脚本、DLL、README 或可执行文件。不要把安装后的音频提交到本仓库或附加到 GitHub Release；请保留下载包自带的许可和署名。自定义 AWC／REL 的接入方式见 [自定义警笛教程](custom-sirens.md)。
 
-需要两份作者自行提供的下载内容：
-
-1. [完整 Server-Sided-Sounds-and-Sirens 资源](https://github.com/fk-1997/Server-Sided-Sounds-and-Sirens)，用于取得原始 `serversideaudio_sounds.dat54.rel` 和完整 `dlc_serversideaudio` 银行目录。
-2. [LVC Extras 的 Server Sided Mega Pack A (5+1)](https://github.com/TrevorBarns/luxart-vehicle-control-extras/tree/master/Siren%20Packs/Server%20Sided%20Mega%20Pack%20A%20%285%2B1%29)，其中 `dlc_serversideaudio.zip` 是替换银行，不是完整基础音频资源。
-
-先解压完整基础资源，再把 Mega Pack 的替换 AWC 覆盖到这份**本地音频副本**的 `dlc_serversideaudio` 目录；保留原始 DAT 和其他银行。只提供 Mega Pack 的几个替换文件会缺少 DAT 所引用的银行，安装工具会拒绝不完整输入。
-
-```powershell
-.\tools\install-audio.ps1 -Pack Lvc `
-  -SourceDirectory '<合并后的完整 Server-Sided-Sounds-and-Sirens 目录>' `
-  -OutputDirectory '<仓库外的 FiveM resources 目录>'
-```
-
-工具验证 DAT 名称表引用的全部银行，再原样复制为独立 `yx_siren_audio_lvc` 资源。菜单中的 `ss2000` 与 `fire_q` 使用它原有的 `DLC_SERVERSIDEAUDIO`／`OISS_SSA_VEHAUD_*` 名称，不依赖旧私有包中改名的 `YX_*` 银行。
-
-```cfg
-ensure RageUI
-ensure yx_siren_audio_lvc
-ensure yx_sirencontrol
-```
-
-不要同时启动原始基础音频资源与生成的 `yx_siren_audio_lvc`，两者会重复挂载同一银行命名空间。Modern 和 LVC 这两种独立资源可以按需同时安装。
-
-LVC Extras 对 Federal Signal／Rumbler 录音署名给 [ShotsFired932](https://www.lcpdfr.com/downloads/gta5mods/audio/22708-federal-signal-and-code-3-sirens/)，消防部分署名 MrLucky8／American Fire Sirens。请保留下载包附带的原始许可与署名，并核对你的使用或分发方式是否被允许；这里的配置和工具不授予音频再分发许可。
-
-## 安装工具的边界
-
-- 可使用 `-WhatIf` 先验证路径和所需文件，查看将创建的资源。
-- 输出必须位于本发布仓库外，不允许覆盖已存在的目标资源目录。更新时先自行备份和处理旧目标，再重新运行。
-- 复制前验证输入，复制后逐项核对 SHA-256；manifest 最后写入。
-- 工具不会自动下载包、获取付费内容、编译第三方音频模板或修改服务器配置。
-- `.gitignore` 和 `tools/audit-release.py` 会拦截音频文件进入本仓库。不要将安装后的独立音频资源再提交或附加为本项目 GitHub Release 附件。
-
-安装验证不等于游戏实测。若菜单包没有出现，先检查对应资源名称及启动顺序；若出现但无声，检查实际音频版本、原始声音名、重复银行挂载和客户端缓存。
+若菜单没有出现对应包，检查 `audio/<包名>/installed-files.json` 和 `fxmanifest.lua` 的受管区块是否存在，再查看启动日志。若菜单出现但无声，检查所用版本、AWC／REL 内部声音名、重复银行挂载和客户端缓存。
