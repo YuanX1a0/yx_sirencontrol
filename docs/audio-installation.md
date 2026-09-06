@@ -39,7 +39,7 @@ yx_sirencontrol/
 1. [Server-Sided-Sounds-and-Sirens](https://github.com/fk-1997/Server-Sided-Sounds-and-Sirens) 的完整音频，用于取得 `serversideaudio_sounds.dat54.rel` 和全部 `dlc_serversideaudio` 银行。
 2. [LVC Extras：Server Sided Mega Pack A (5+1)](https://github.com/TrevorBarns/luxart-vehicle-control-extras/tree/master/Siren%20Packs/Server%20Sided%20Mega%20Pack%20A%20%285%2B1%29) 的替换 AWC。
 
-先解压完整基础包，再把 Mega Pack 的 AWC 覆盖到这份**本地副本**的 `dlc_serversideaudio` 目录。Mega Pack 本身没有完整 DAT 和全部银行，不能单独安装。准备好以后运行：
+先解压完整基础包，再解压 Mega Pack 目录里的 `dlc_serversideaudio.zip`，把其中 7 个 AWC 覆盖到这份**本地副本**的 `dlc_serversideaudio` 目录。不要把 ZIP 文件本身放进音频目录。Mega Pack 没有完整 DAT 和全部银行，不能单独安装。准备好以后运行：
 
 ```powershell
 .\audio\install.ps1 -Pack Lvc `
@@ -72,6 +72,18 @@ ensure yx_sirencontrol
 ```
 
 安装后执行 `restart yx_sirencontrol`，并让玩家重新连接。若客户端仍使用旧音频，让玩家完全退出 FiveM 后再进入以清除本次连接的音频缓存。
+
+### 以后更新控制器
+
+不要直接用新版 ZIP 覆盖正在使用的目录。新版 `fxmanifest.lua` 的音频受管区块是空的，单独保留旧 `audio/modern` 或 `audio/lvc` 并不能继续挂载声音。
+
+有原始下载包时，推荐停止资源、解压一个全新的 `yx_sirencontrol`，再对新目录重新运行本页安装命令。没有保留原始下载包时，请在替换前同时备份：
+
+- `audio/modern`、`audio/lvc` 和 `audio/custom` 中实际使用的目录；
+- `config/sirens/` 中自己增加的 JSON；
+- 旧 `fxmanifest.lua` 两个 `YX_AUDIO_*` 标记之间的注册内容，以及自己增加的 `AUDIO_*`／`siren_pack` 行。
+
+把运行目录复制到新资源后，只把这些音频注册填回新版 manifest 对应的空受管区块，并重新加入自定义包注册。不要用旧 manifest 整体覆盖新版，否则可能恢复已经变更的脚本路径或版本信息。最后执行 `restart yx_sirencontrol`。
 
 安装器拒绝覆盖已有的 `audio/modern` 或 `audio/lvc`。更新包时先停止资源，备份后删除对应安装目录，再用新输入重新运行安装器。安装器会核对 AWC 签名和复制前后的 SHA-256，并最后才写入 `installed-files.json`；标记不存在时，控制器不会把相应音色放进菜单。
 
