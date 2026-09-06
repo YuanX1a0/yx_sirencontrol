@@ -137,4 +137,4 @@ restart yx_sirencontrol
 
 菜单没有新包时，检查 `siren_pack` 路径、JSON 语法、`Id` 和可选 `RequiredFile`。菜单存在但没有声音时，优先核对 REL 中的 bank／soundset／sound 名称、`AUDIO_*` 类型、wavepack 路径和是否有其他资源重复注册同一命名空间。修改音频后仍听到旧声音时，完全退出 FiveM 后重新连接。
 
-只在自己的服务器资源副本中放置你有权使用的音频。Git 会忽略 `audio/modern`、`audio/lvc` 和 `audio/custom`，官方发行 ZIP 也不会包含这些本地文件。
+只在自己的服务器资源副本中放置你有权使用的音频。本项目的 GitHub 源码仓库会忽略 `audio/modern`、`audio/lvc` 和 `audio/custom`，官方发行 ZIP 也不会包含这些本地文件。Release ZIP 本身不带 `.gitignore`；若服务器资源由你自己的 Git 仓库管理，请自行把这些本地音频目录加入忽略规则，避免误提交第三方内容。
