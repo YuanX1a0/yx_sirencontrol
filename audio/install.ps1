@@ -11,8 +11,10 @@ An existing install is never overwritten. The script updates the managed audio
 block in this resource's fxmanifest.lua after copied files pass SHA-256 checks.
 Restart yx_sirencontrol after installation; no additional audio resource is used.
 
-Modern: download and extract Realistic American Sirens Pack / Modern Siren Pack
-3.1.5.A from https://www.gta5-mods.com/misc/realistic-american-sirens-pack .
+Modern: this controller's labels were verified with the user's 3.1.5.A copy.
+Author-page versions can differ. Obtain and extract a permitted copy from
+https://www.gta5-mods.com/misc/realistic-american-sirens-pack or
+https://www.lcpdfr.com/downloads/gta5mods/audio/14373-modern-siren-pack/ .
 Point SourceDirectory at the extracted pack (vehicles/vehicles.awc), the vehicles
 directory itself (vehicles.awc), or a prepared directory with sfx/resident/vehicles.awc.
 The resident wavepack replaces GTA's native siren recordings globally; use only
@@ -21,9 +23,10 @@ one resident/vehicles.awc replacement at a time. No DAT file is needed.
 Lvc: download the complete audio files from
 https://github.com/fk-1997/Server-Sided-Sounds-and-Sirens and overlay the seven AWC
 files you download from the Server Sided Mega Pack A (5+1) directory in
-https://github.com/TrevorBarns/luxart-vehicle-control-extras .
-The Mega Pack alone is incomplete: it supplies replacement banks, not the original
-DAT or all other banks referenced by that DAT. SourceDirectory must contain
+https://github.com/TrevorBarns/luxart-vehicle-control-extras . Extract its
+dlc_serversideaudio.zip, then overlay the seven AWC files on the complete local
+base copy. The Mega Pack alone is incomplete: it supplies replacement banks, not
+the original DAT or all other banks referenced by that DAT. SourceDirectory must contain
 data/serversideaudio_sounds.dat54.rel and dlc_serversideaudio/*.awc (or
 sfx/dlc_serversideaudio/*.awc). A resource root with that layout under audio/ is
 also supported. The original DLC_SERVERSIDEAUDIO names are preserved. Every bank
