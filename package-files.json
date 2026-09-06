@@ -1,5 +1,5 @@
 {
-  "version": "3.9.0",
+  "version": "3.9.1",
   "resource": "yx_sirencontrol",
   "files": [
     "LICENSE",
@@ -21,7 +21,6 @@
     "docs/audio-installation.md",
     "docs/custom-sirens.md",
     "fxmanifest.lua",
-    "server/beacon.lua",
     "server/yuanx1a0_siren_control.net.dll",
     "stream/yx_movia_d_red.ydr",
     "stream/yx_movia_d_red_glow.ydr",

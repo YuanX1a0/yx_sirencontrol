@@ -3,7 +3,7 @@
 """Build a clean install ZIP from committed Git blobs, never working-tree files.
 
 Example, from a clean committed checkout:
-    python tools/build-package.py --commit HEAD --output-directory D:/Packages/3.9.0
+    python tools/build-package.py --commit HEAD --output-directory D:/Packages/3.9.1
 
 The existing output directory must be outside this repository. Each output must
 be new. SHA256SUMS records the completed ZIP's hash. package-files.json controls
@@ -28,7 +28,7 @@ REQUIRED_FILES = frozenset({
     'audio/README.md', 'audio/install.ps1',
     'client/menu.lua', 'client/config.js', 'client/settings.js',
     'client/beacon.js', 'client/main.js',
-    'server/yuanx1a0_siren_control.net.dll', 'server/beacon.lua',
+    'server/yuanx1a0_siren_control.net.dll',
     'config/beacon.json', 'config/sirens/builtin.json',
     'docs/audio-installation.md', 'docs/custom-sirens.md',
     'stream/yx_movia_d_red.ydr', 'stream/yx_movia_d_red_glow.ydr',
@@ -143,7 +143,7 @@ def check_inventory(inventory, reviewed):
 
 def check_manifest(raw, version, files):
     # This resource uses literal manifest entries. Reject missing local references
-    # before writing the ZIP; @RageUI entries intentionally remain external.
+    # before writing the ZIP.
     text = raw.decode('utf-8-sig')
     text = re.sub(r'--\[\[.*?\]\]', '', text, flags=re.S)
     text = re.sub(r'--[^\r\n]*', '', text)

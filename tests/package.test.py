@@ -39,7 +39,7 @@ class Fixture:
         self.write('tools/developer-only.py', '# Never an installation file\n')
         self.write('tests/never-ship.txt', 'Development fixture\n')
         self.write('docs/beacon-preview.png', b'PNG PLACEHOLDER, NO REAL IMAGE')
-        self.set_version('3.9.0')
+        self.set_version('3.9.1')
         self.git('init', '-q')
         for name, value in [('user.name', 'Package Fixture'),
                             ('user.email', 'fixture@example.invalid'),
@@ -74,7 +74,7 @@ data_file 'DLC_ITYP_REQUEST' 'stream/yx_movia_d_red_glow.ytyp'
 siren_pack 'config/sirens/builtin.json'
 client_scripts { '@RageUI/RMenu.lua', 'client/menu.lua', 'client/config.js',
  'client/settings.js', 'client/beacon.js', 'client/main.js' }
-server_scripts { 'server/yuanx1a0_siren_control.net.dll', 'server/beacon.lua' }
+server_script 'server/yuanx1a0_siren_control.net.dll'
 """ % version)
         self.write_json('package-files.json', {'version': version, 'resource': BUILDER.RESOURCE, 'files': self.files})
         reviewed = sorted({p.relative_to(self.root).as_posix() for p in self.root.rglob('*')
@@ -107,8 +107,8 @@ class PackageTests(unittest.TestCase):
         fixture = self.fixture()
         result = fixture.build()
         self.assertEqual(result['commit'], fixture.commit)
-        self.assertEqual(result['version'], '3.9.0')
-        self.assertEqual(result['archive'].name, 'yx_sirencontrol-v3.9.0.zip')
+        self.assertEqual(result['version'], '3.9.1')
+        self.assertEqual(result['archive'].name, 'yx_sirencontrol-v3.9.1.zip')
         self.assertEqual(result['checksums'].name, 'SHA256SUMS')
         with zipfile.ZipFile(result['archive']) as archive:
             self.assertEqual(archive.namelist(), ['yx_sirencontrol/' + p for p in sorted(fixture.files)])
@@ -118,6 +118,8 @@ class PackageTests(unittest.TestCase):
                 self.assertEqual(archive.read(info), (fixture.root / name).read_bytes())
             self.assertFalse(any('/tools/' in p or '/tests/' in p or '/.git' in p for p in archive.namelist()))
             self.assertFalse(any(p.endswith(('release-files.json', 'package-files.json', 'beacon-preview.png')) for p in archive.namelist()))
+            lua_files = [p for p in archive.namelist() if p.endswith('.lua')]
+            self.assertEqual(lua_files, ['yx_sirencontrol/client/menu.lua', 'yx_sirencontrol/fxmanifest.lua'])
         expected = hashlib.sha256(result['archive'].read_bytes()).hexdigest() + '  ' + result['archive'].name + '\n'
         self.assertEqual(result['checksums'].read_text('ascii'), expected)
 
@@ -134,13 +136,13 @@ class PackageTests(unittest.TestCase):
         fixture = self.fixture()
         original = fixture.commit
         fixture.write('client/main.js', '// clean current revision TWO\n')
-        fixture.set_version('3.9.1')
+        fixture.set_version('3.9.2')
         fixture.save_commit()
         result = fixture.build(commit=original)
-        self.assertEqual(result['version'], '3.9.0')
+        self.assertEqual(result['version'], '3.9.1')
         with zipfile.ZipFile(result['archive']) as archive:
             self.assertEqual(archive.read('yx_sirencontrol/client/main.js'), b'// committed client revision one\n')
-            self.assertIn(b"version '3.9.0'", archive.read('yx_sirencontrol/fxmanifest.lua'))
+            self.assertIn(b"version '3.9.1'", archive.read('yx_sirencontrol/fxmanifest.lua'))
 
     def test_unstaged_change_rejected(self):
         fixture = self.fixture()
@@ -227,7 +229,7 @@ class PackageTests(unittest.TestCase):
 
     def test_manifest_version_must_match(self):
         fixture = self.fixture()
-        fixture.write('fxmanifest.lua', "version '3.9.1'\n")
+        fixture.write('fxmanifest.lua', "version '9.9.9'\n")
         fixture.save_commit()
         self.assert_rejected(fixture, 'exactly the package version')
 

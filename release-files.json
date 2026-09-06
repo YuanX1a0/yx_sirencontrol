@@ -1,5 +1,5 @@
 {
-  "version": "3.9.0",
+  "version": "3.9.1",
   "files": [
     ".gitattributes",
     ".gitignore",
@@ -26,12 +26,10 @@
     "fxmanifest.lua",
     "package-files.json",
     "release-files.json",
-    "server/beacon.lua",
     "server/yuanx1a0_siren_control.net.dll",
     "stream/yx_movia_d_red.ydr",
     "stream/yx_movia_d_red_glow.ydr",
     "stream/yx_movia_d_red_glow.ytyp",
-    "tests/beacon-server.test.lua",
     "tests/beacon.test.js",
     "tests/client.test.js",
     "tests/install-audio.test.ps1",
@@ -47,7 +45,7 @@
   ],
   "binary_sha256": {
     "docs/beacon-preview.png": "3e62f65c3c1267afcb3a8a5b61a19ec1fabbc5173a6106285dde33b7ab143bef",
-    "server/yuanx1a0_siren_control.net.dll": "04ebcad0486f02b4940fe817868e5da14f4a381402372fc1a845b8a5d4b7eb7f",
+    "server/yuanx1a0_siren_control.net.dll": "6b161c0b68e0ab7f1fd8e5886685c4cd39643bb97f17f302171b0d91a709e6e6",
     "stream/yx_movia_d_red.ydr": "2734ef2ee3bad375a224f54eb388ff728b1471c98954fd8d603b61a5ac0cc822",
     "stream/yx_movia_d_red_glow.ydr": "00f4bb041da6a0a4f41a028c241aa335f4a76859009260a6b02c3dbc1200ffb9",
     "stream/yx_movia_d_red_glow.ytyp": "82ec60403312ba564f61f88b0181ee4fbb8a7d3c3b79cd1707a36ca55736aaf7"

@@ -6,7 +6,7 @@ game 'gta5'
 
 author 'YuanX1a0'
 description '带 RageUI 中文设置菜单的紧急车辆与便衣警灯警笛控制器'
-version '3.9.0'
+version '3.9.1'
 
 dependencies {
     '/onesync',
@@ -77,4 +77,3 @@ client_scripts {
 }
 
 server_script 'server/yuanx1a0_siren_control.net.dll'
-server_script 'server/beacon.lua'

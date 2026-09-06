@@ -1,4 +1,4 @@
-# yx_sirencontrol 3.9.0
+# yx_sirencontrol 3.9.1
 
 FiveM 警灯与警笛控制器，提供中文 RageUI 设置菜单、紧急车辆灯笛控制、非紧急车辆便衣警灯，以及可装拆的红色车顶 LED 警灯。
 
@@ -6,7 +6,7 @@ FiveM 警灯与警笛控制器，提供中文 RageUI 设置菜单、紧急车辆
 
 ## 安装
 
-请从 Releases 下载 `yx_sirencontrol-v3.9.0.zip`，不要用 GitHub 自动生成的 Source code 压缩包。正式 ZIP 只有一个 `yx_sirencontrol/` 顶层目录，并且不含测试、模型工具、审查脚本或本地音频。
+请从 Releases 下载 `yx_sirencontrol-v3.9.1.zip`，不要用 GitHub 自动生成的 Source code 压缩包。正式 ZIP 只有一个 `yx_sirencontrol/` 顶层目录，并且不含测试、模型工具、审查脚本或本地音频。
 
 1. 单独取得 [LVC 提供的兼容 RageUI 2.0 目录](https://github.com/TrevorBarns/luxart-vehicle-control/tree/stable/dependencies/RageUI)，保留其原有署名和许可，资源目录命名为 `RageUI`。该目录应有 `RMenu.lua`、`menu/RageUI.lua` 等文件。
 2. 把 ZIP 内的 `yx_sirencontrol` 目录放入服务器 `resources`。目录名必须完全一致，不能带 `-main`、版本号或其他后缀。
@@ -50,8 +50,8 @@ I 菜单可以按左右、前后、高低调整位置，每次 1 cm、各轴 ±2
 
 | 目录 | 内容 |
 | --- | --- |
-| `client/` | RageUI、控制器、保存和便携 LED 客户端代码 |
-| `server/` | 编译后的服务端 DLL 和便携 LED 权限同步 |
+| `client/` | RageUI 菜单、控制器、保存和便携 LED 客户端代码 |
+| `server/` | 包含灯笛控制与便携 LED 权限同步的服务端 DLL |
 | `config/` | `beacon.json` 与 `sirens/*.json` 文本配置 |
 | `audio/` | 本地安装器、教程，以及使用者自己放入的音频 |
 | `stream/` | 本项目的红色 LED 运行模型 |
