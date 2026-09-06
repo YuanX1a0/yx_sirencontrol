@@ -2,7 +2,7 @@
 
 本教程用于已经取得合法使用权、并且已经编译成 FiveM 可加载格式的警笛包。最终文件直接放在 `yx_sirencontrol` 内，不要再建立单独的音频资源。
 
-FiveM 运行时需要 `.awc` 和 `.dat54.rel`／`.dat151.rel`。WAV、MP3、OAC、XML 和 OpenFormats 工程不能直接播放，需要先按声音包作者的工具链编译。给文件改名也不会改变其内部银行、soundset 或声音名称。
+FiveM 不能直接播放 WAV、MP3、OAC、XML 或 OpenFormats 工程，必须先按声音包作者的工具链取得可加载的 AWC／REL。替换现有 `resident` 槽位的包可以只有 AWC；新增 DLC 音频银行通常需要 AWC 加上该包实际提供的 `.dat54.rel`，有些包还带 `.dat151.rel`。给文件改名不会改变其内部银行、soundset 或声音名称。
 
 ## 1. 建立独立目录
 
