@@ -1,6 +1,6 @@
 # yx_sirencontrol 3.9.1
 
-FiveM 警灯与警笛控制器，提供中文 RageUI 设置菜单、紧急车辆灯笛控制、非紧急车辆便衣警灯，以及可装拆的红色车顶 LED 警灯。
+FiveM 警灯与警笛控制器、紧急车辆灯笛控制、非紧急车辆便衣警灯，以及可装拆的红色车顶 LED 警灯。
 
 本仓库不包含第三方警笛录音、音频银行、RageUI 源码或游戏动画文件。C# 服务端项目源码不在公开仓库中；发行版只提供运行所需的 `server/yuanx1a0_siren_control.net.dll`。许可见 [LICENSE](LICENSE)，外部来源和下载链接见 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。
 
@@ -17,7 +17,6 @@ ensure RageUI
 ensure yx_sirencontrol
 ```
 
-资源名检测区分大小写。名称不是 `yx_sirencontrol` 时，客户端、菜单、服务端和便携警灯模块都会停用，并在控制台显示中文错误。
 
 默认只有 GTA 原生警笛。Modern、SS2000／Rumbler 和消防 Q 的音频由使用者自行下载，然后直接安装到本资源的 `audio/` 内；不再创建额外的警笛资源。命令和来源见 [内置可选音频安装说明](docs/audio-installation.md)。
 
